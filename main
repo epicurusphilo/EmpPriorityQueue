@@ -1,0 +1,225 @@
+// EmpPriorityQueue.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node
+{
+	string fName;
+	string lName;
+	string empId;
+	int    count;
+	Node   *next;
+};
+
+int nodeCount = 0, userSelect = 0;
+string fName = "";
+string lName = "";
+string empId = "";
+
+Node* newEmp(string fName, string lName, string empId);
+
+Node *newPtr = newPtr;
+
+void printQueue(Node* frontPtr);
+void deleteQueue(Node* frontPtr);
+int welcomeMessage(int &userSelect);
+void addNewEmp(Node* &frontPtr, Node* &endPtr);
+
+//Begin the main program
+void main()
+{
+	Node *frontPtr = NULL, *endPtr = NULL, *newPtr = NULL, *currPtr = NULL, *prevPtr = NULL;
+	bool moreInput = false; 
+	string fName="", lName="", empId="", answer="";
+
+	do
+	{
+		welcomeMessage(userSelect);
+		while (userSelect != 5)
+
+		{
+			if (userSelect == 1)
+			{
+				Node* newNode(string);
+				addNewEmp(frontPtr, endPtr);
+				break;
+			}
+			else if (userSelect == 2)
+			{
+				deleteQueue(frontPtr);
+				cout << "\nQueue deleted!" << endl;
+				break;
+			}
+			else if (userSelect == 3)
+			{
+				printQueue(frontPtr);
+				break;
+			}
+		}
+		cout << "\nWould you like to run again? (y/n): ";
+		cin >> answer;
+		cout << endl;
+		moreInput = ((answer[0] != 'n') && (answer[0] != 'N'));
+	} while (moreInput);
+
+	printQueue(frontPtr);
+}
+
+//This will create the first employee node and point newEmp at new Node
+Node * newEmp(string fName, string lName, string empId)
+{
+	Node *newPtr = new Node;
+	//Node fields update
+	newPtr->fName=fName;
+	newPtr->lName=lName;
+	newPtr->empId=empId;
+	newPtr->count = 1;
+	newPtr->next = NULL;
+
+	return newPtr;
+}
+
+//This will display the welcome message and ask for input from user.
+int welcomeMessage(int &userSelect)
+{
+	cout << "Welcome to the Employee Database!\n\n" << endl;
+	cout << "Press 1 to add new employee.\n" <<endl;
+	cout << "Press 2 to delete employee queue.\n" <<endl; //delete database
+	cout << "Press 3 to print all employees in database.\n" <<endl;
+	cout << "Press 5 to exit database.\n" <<endl;
+	cin >> userSelect;
+	return userSelect;
+}
+
+
+
+//This will print out the data in the queue.
+void printQueue(Node* frontPtr)
+{
+	Node *currPtr = NULL;
+	int count = 1;
+	currPtr = frontPtr;
+
+	while (currPtr != NULL)
+	{
+		cout << "\nEmployee Slot" << count << ":" << endl;
+		cout << "First Name :" << currPtr->fName << endl;
+		cout << "Last Name :" << currPtr->lName << endl;
+		cout << "Employee ID :" << currPtr->empId << endl;
+		count++;
+
+		currPtr = currPtr->next;
+
+	}
+}
+
+//This will delete the data in the queue.
+void deleteQueue(Node* frontPtr)
+{
+	Node *prevPtr = NULL, *currPtr = NULL;
+
+	prevPtr = frontPtr;
+	currPtr = frontPtr->next;
+
+	while (currPtr != NULL)
+	{
+		delete prevPtr;
+		prevPtr = currPtr;
+		currPtr = currPtr->next;
+	}
+}
+
+//This will place newEmp into queue.
+void addNewEmp(Node* &frontPtr, Node* &endPtr)
+{
+	
+
+	Node *newPtr = NULL, *currPtr = NULL, *prevPtr = NULL;
+	string answer = "", fName, lNAme, empId;
+	bool moreInput = false, matchFound = false;
+
+	
+				//If user enters 5 at each prompt the loop will stop
+				while (fName != "5")
+				{
+					matchFound = false;
+					//First data piece is first name.
+					cout << "\nEnter employee's first name: (5 to Exit): ";
+					cin.ignore(cin.rdbuf()->in_avail());
+					getline(cin, fName);
+
+					//Second data piece is last name.
+					cout << "Enter employee's last name: (5 to Exit): ";
+					cin.ignore(cin.rdbuf()->in_avail());
+					getline(cin, lName);
+
+					//Third data piece is employee number.
+					cout << "Enter employee's ID number: (5 to Exit): ";
+					cin.ignore(cin.rdbuf()->in_avail());
+					getline(cin, empId);
+
+					//If node is the first one then it is frontPtr and endPtr.
+					if (nodeCount == 0)
+					{
+						frontPtr = newEmp(fName, lName, empId);
+						endPtr = frontPtr;
+						nodeCount++;
+					}
+					//If node was not the first one created, check if it should go in front of queue.
+					else if (lName <= frontPtr->lName)
+					{
+						//Counter will update if node data already exists.
+						if (lName == frontPtr->lName)
+							frontPtr->count++;
+						//Check if need to connect new node to front of queue.
+						else
+						{
+							newPtr = newEmp(fName, lName, empId);
+							newPtr->next = frontPtr;
+							frontPtr = newPtr;
+							nodeCount++;
+						}
+					}
+					//Check if need to connect new node to end of queue.
+					else if (lName >= endPtr->lName)
+					{
+						//Counter will update if node data already exists.
+						if (lName == endPtr->lName)
+							endPtr->count++;
+						else
+						{
+							newPtr = newEmp(fName, lName, empId);
+							endPtr->next = newPtr;
+							endPtr = newPtr;
+							nodeCount++;
+						}
+					}
+					//Go through list and insert in proper order.
+					else
+					{
+						prevPtr = frontPtr;
+						currPtr = frontPtr->next;
+						//Move to insertion point.
+						while (lName > currPtr->lName)
+						{
+							prevPtr = currPtr;
+							currPtr = currPtr->next;
+						}
+						//Update counter if data already present.
+						if (lName == currPtr->lName)
+							currPtr->count++;
+						else
+						{
+							newPtr = newEmp(fName, lName, empId);
+							prevPtr->next = newPtr;
+							newPtr->next = currPtr;
+							nodeCount++;
+						}
+					}
+				}
+}
+
